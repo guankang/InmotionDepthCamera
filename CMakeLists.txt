@@ -1,0 +1,15 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+PROJECT (DepthCamera)
+
+SET(SRCDIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Set Source Files
+file(GLOB_RECURSE SRC_LIST
+	"${SRCDIR}/main.cpp"
+	"${SRCDIR}/depthCamera/*.cpp"
+	)
+
+ADD_EXECUTABLE(DepthCamera ${SRC_LIST})
+
+
