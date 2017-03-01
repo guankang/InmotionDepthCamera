@@ -1,0 +1,7 @@
+[CameraParams]
+FocalLength_X 207.0
+FocalLength_Y 207.0
+PrincipalPoint_X 40.0
+PrincipalPoint_Y 30.0
+RadialDistortion_K1 0.0
+RadialDistortion_K2 0.0

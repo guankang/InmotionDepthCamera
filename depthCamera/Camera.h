@@ -20,8 +20,8 @@ public:
 	int Close();
 	int ReadDepthCameraFrame(float * anlge, unsigned short * phase_Buffer, unsigned short *  amplitude_Buffer, unsigned char * ambient_Buffer, unsigned char * flags_Buffer);
 	int ReadXYZFrame(float * xyz_data_Buffer);
-
 	int PhaseToDepth(unsigned short * phase, unsigned short * depth);
+
 
 	int DepthToPointCloud(unsigned short *phase, float *pc, int w, int h, float w_f, float h_f, float p_x, float p_y);
 

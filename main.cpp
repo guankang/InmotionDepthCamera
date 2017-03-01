@@ -32,8 +32,8 @@ void PrintBuf(const void *pPos, unsigned int MaxLength, const char *name)
 
 int main()
 {
-	int width = 320;
-	int height = 240;
+	int width = 80;
+	int height = 60;
 	Camera camera;
 #ifdef NAVIPACK_WIN
 	int ret = camera.Open(NULL, width, height);
@@ -46,6 +46,7 @@ int main()
 		printf("open failed!\n");
 		return -1;
 	}
+	printf("open sucecss!\n");
 	float angle = 0;
 	unsigned short* phase_Buffer = new unsigned short[width * height];
 	unsigned short* amplitude_Buffer = new unsigned short[width * height];
@@ -54,8 +55,15 @@ int main()
 	while (1)
 	{
 		int ret = camera.ReadDepthCameraFrame(&angle, phase_Buffer, amplitude_Buffer, ambient_Buffer, flags_Buffer);
+		//phase --> depth
+		camera.PhaseToDepth(phase_Buffer, phase_Buffer);
 		Sleep(30);
+
+
 		PrintBuf(phase_Buffer,64,"phase_Buffer:");
+		PrintBuf(amplitude_Buffer, 64, "amplitude_Buffer:");
+		PrintBuf(ambient_Buffer, 64, "ambient_Buffer:");
+		PrintBuf(flags_Buffer, 64, "flags_Buffer:");
 	}
 
 	camera.Close();

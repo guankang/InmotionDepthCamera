@@ -14,7 +14,8 @@ Camera::Camera()
 {
 	isOpened = 0;
 	mFrameBuf = NULL;
-	mDepthFrameBuf = NULL;
+	mDepthFrameBuf = NULL; 
+	D2PTable = NULL;
 #ifndef NAVIPACK_WIN
 	m_videoIn = (struct vdIn *) calloc(1, sizeof(struct vdIn));
 #endif
@@ -74,16 +75,15 @@ int Camera::Open(const char * devName, int width, int height)
 		}
 	}
 
-	ReadCameraParaFromFile();
-	CreateD2PTable(mFrameWidth, mFrameHeight, FocalLength_X, FocalLength_Y, PrincipalPoint_X, PrincipalPoint_Y);
+
 #else
 	//uvc camera
 	ret = mCamera.init_videoIn(m_videoIn,devName, width * 2, height, V4L2_PIX_FMT_YUYV, 1);
 	if (ret>=0)
 	{
 		isOpened = 1;
-		mFrameWidth = width;//320
-		mFrameHeight = height;//240
+		mFrameWidth = width;
+		mFrameHeight = height;
 
 
 		if (mFrameBuf)
@@ -104,6 +104,9 @@ int Camera::Open(const char * devName, int width, int height)
 		isOpened = 0;
 	}
 #endif
+
+	ReadCameraParaFromFile();
+	CreateD2PTable(mFrameWidth, mFrameHeight, FocalLength_X, FocalLength_Y, PrincipalPoint_X, PrincipalPoint_Y);
 	return ret;
 }
 
@@ -169,7 +172,7 @@ int Camera::ReadDepthCameraFrame(float * anlge, unsigned short * phase_Buffer, u
 	{
 		ret = mCamera.uvcGrab(m_videoIn);
 		SplitRawFrame(mFrameWidth, mFrameHeight, m_videoIn->framebuffer, anlge, phase_Buffer, amplitude_Buffer, ambient_Buffer, flags_Buffer);
-		PhaseToDepth(phase_Buffer, phase_Buffer);
+	
 	}
 #endif
 	return ret;
@@ -180,16 +183,18 @@ int Camera::PhaseToDepth(unsigned short * phase, unsigned short * depth)
 	unsigned short *p = phase;
 	unsigned short *d = depth;
 	float *table_ptr = D2PTable;
+	
 	for (int i = 0; i < mFrameHeight; i++)
 	{
-		for (int j = 0; i < mFrameWidth; j++)
+
+		for (int j = 0; j < mFrameWidth; j++)
 		{
+			//printf("%d %d %.2f\n",i,j, *table_ptr);
 			*d = *p*7.5 / 3.072*(*table_ptr);
 			d++;
 			p++;
 			table_ptr++;
 		}
-
 	}
 	return 0;
 }
